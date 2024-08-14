@@ -1,2 +1,2 @@
 # dev-lab-iac
-IAC for the development lab
+IAC used to provision lab.

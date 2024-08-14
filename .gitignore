@@ -1,0 +1,4 @@
+.terraform*
+*.json
+!sample.json
+*.tfstate*

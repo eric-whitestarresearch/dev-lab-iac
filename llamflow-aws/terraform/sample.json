@@ -1,0 +1,5 @@
+{
+    "vpc_cidr" : "10.0.0.0/16",
+    "vpc_name" : "Sample VPC Name",
+    "allowed_account_ids" : ["Account ID"]
+}
