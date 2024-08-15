@@ -2,3 +2,5 @@
 *.json
 !sample.json
 *.tfstate*
+*.conf
+!sample-backend.conf

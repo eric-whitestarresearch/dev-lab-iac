@@ -1,5 +1,38 @@
 {
     "vpc_cidr" : "10.0.0.0/16",
-    "vpc_name" : "Sample VPC Name",
-    "allowed_account_ids" : ["Account ID"]
+    "vpc_name" : "vpc_name",
+    "allowed_account_ids" : ["Allowed Accoud IDs"],
+    "ec2_ssh_key_name" : "ssh_keypair_name",
+    "nat_gw_ext_subnet" : "name of nat external subnet",
+    "nat_gw_int_subnet" : "name of nat internal subnet",
+    "public_subnets" : {
+        "pub_a" : {
+            "cidr" : "10.0.0.0/23",
+            "zone" : "us-east-2a",
+            "name" : "pub_a"
+        }, "pub_b" : {
+            "cidr" : "10.0.2.0/23",
+            "zone" : "us-east-2b",
+            "name" : "pub_b"
+        }, "pub_c": {
+            "cidr" : "10.0.4.0/23",
+            "zone" : "us-east-2c",
+            "name" : "pub_c"
+        }
+    },
+    "private_subnets" : {
+        "private_a" : {
+            "cidr" : "10.0.6.0/23",
+            "zone" : "us-east-2a",
+            "name" : "private_a"
+        }, "private_b" : {
+            "cidr" : "10.0.8.0/23",
+            "zone" : "us-east-2b",
+            "name" : "private_b"
+        }, "private_c": {
+            "cidr" : "10.0.10.0/23",
+            "zone" : "us-east-2c",
+            "name" : "private_c"
+        }
+    }
 }
