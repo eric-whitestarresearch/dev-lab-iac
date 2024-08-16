@@ -7,26 +7,12 @@ terraform {
   }
 }
 
-data "aws_ami" "ubuntu_x64" {
-  most_recent = true
-
-  filter {
-    name   = "name"
-    values = ["ubuntu/images/hvm-ssd/ubuntu-jammy-22.04-amd64-server-*"]
-  }
-
-  filter {
-    name   = "virtualization-type"
-    values = ["hvm"]
-  }
-
-  owners = ["099720109477"] # Canonical
-}
 
 resource "aws_vpc" "vpc" {
   cidr_block       =  var.vpc_cidr
   instance_tenancy = "default"
-
+  enable_dns_support = true
+  enable_dns_hostnames  = true
   tags = {
     Name = var.vpc_name_label
   }
@@ -64,31 +50,13 @@ resource "aws_internet_gateway" "igw" {
   }
 }
 
-resource "aws_network_interface" "nat_gateway_nic_internal" {
-  subnet_id = aws_subnet.private_subnets[var.nat_gw_int_subnet].id
-  security_groups = [aws_security_group.nat_gw_allow.id]
-
-  tags = {
-    Name = "${var.vpc_name_label}_nat_gw_nic_int"
-  }
-}
-
-resource "aws_network_interface" "nat_gateway_nic_external" {
+resource "aws_network_interface" "nat_gateway_nic" {
   subnet_id = aws_subnet.public_subnets[var.nat_gw_ext_subnet].id
   security_groups = [aws_security_group.nat_gw_allow.id]
+  source_dest_check = false
 
   tags = {
     Name = "${var.vpc_name_label}_nat_gw_nic_ext"
-  }
-}
-
-
-resource "aws_eip" "nat_gatway_public_ip" {
-  domain = "vpc"
-  network_interface = aws_network_interface.nat_gateway_nic_external.id
-
-  tags = {
-    Name = "${var.vpc_name_label}_nat_gw_pub_ip"
   }
 }
 
@@ -118,21 +86,16 @@ resource "aws_security_group" "nat_gw_allow" {
 }
 
 resource "aws_instance" "nat_gateway" {
-  ami = data.aws_ami.ubuntu_x64.id
+  ami = data.aws_ami.amazon_linux.id
   instance_type = "t3.micro" #This will qualify for the free tier
   key_name = var.ssh_keypair
   iam_instance_profile = var.instance_profile
+  user_data = file("${path.module}/scripts/nat_gw_user_data.sh")
   
   
   network_interface {
-    network_interface_id = aws_network_interface.nat_gateway_nic_external.id
+    network_interface_id = aws_network_interface.nat_gateway_nic.id
     device_index = 0
-    
-  }
-
-  network_interface {
-    network_interface_id = aws_network_interface.nat_gateway_nic_internal.id
-    device_index = 1
     
   }
 
@@ -162,7 +125,7 @@ resource "aws_route_table" "private_route_table" {
 
     route {
         cidr_block = "0.0.0.0/0"
-        network_interface_id = aws_network_interface.nat_gateway_nic_internal.id #Send all traffic to the NAT VM
+        network_interface_id = aws_network_interface.nat_gateway_nic.id #Send all traffic to the NAT VM
     }
 
     tags = {

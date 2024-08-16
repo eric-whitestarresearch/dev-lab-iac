@@ -33,10 +33,8 @@ output "vpc_info" {
             id = aws_instance.nat_gateway.id
             arn = aws_instance.nat_gateway.arn
             name = aws_instance.nat_gateway.tags.Name
-            int_nic_id = aws_network_interface.nat_gateway_nic_internal.id
-            int_nic_arn = aws_network_interface.nat_gateway_nic_internal.arn
-            ext_nic_id = aws_network_interface.nat_gateway_nic_external.id
-            ext_nic_arn = aws_network_interface.nat_gateway_nic_external.arn
+            nic_id = aws_network_interface.nat_gateway_nic.id
+            nic_arn = aws_network_interface.nat_gateway_nic.arn
         },
         public_route_table = {
             id = aws_route_table.public_route_table.id
