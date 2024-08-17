@@ -9,7 +9,7 @@ terraform {
 
 
 resource "aws_vpc" "vpc" {
-  cidr_block       =  var.vpc_cidr
+  cidr_block =  var.vpc_cidr
   instance_tenancy = "default"
   enable_dns_support = true
   enable_dns_hostnames  = true
@@ -96,41 +96,36 @@ resource "aws_instance" "nat_gateway" {
   network_interface {
     network_interface_id = aws_network_interface.nat_gateway_nic.id
     device_index = 0
-    
   }
 
   tags = {
     Name = "${var.vpc_name_label}_nat_gw"
   }
 }
-
-
-
-
 resource "aws_route_table" "public_route_table" {
-    vpc_id = aws_vpc.vpc.id
+  vpc_id = aws_vpc.vpc.id
 
-    route {
-        cidr_block = "0.0.0.0/0"
-        gateway_id= aws_internet_gateway.igw.id
-    }
+  route {
+    cidr_block = "0.0.0.0/0"
+    gateway_id= aws_internet_gateway.igw.id
+  }
 
-    tags = {
-      Name = "${var.vpc_name_label}_pub_rt"
-    }
+  tags = {
+    Name = "${var.vpc_name_label}_pub_rt"
+  }
 }
 
 resource "aws_route_table" "private_route_table" {
-    vpc_id = aws_vpc.vpc.id
+  vpc_id = aws_vpc.vpc.id
 
-    route {
-        cidr_block = "0.0.0.0/0"
-        network_interface_id = aws_network_interface.nat_gateway_nic.id #Send all traffic to the NAT VM
-    }
+  route {
+    cidr_block = "0.0.0.0/0"
+    network_interface_id = aws_network_interface.nat_gateway_nic.id #Send all traffic to the NAT VM
+  }
 
-    tags = {
-      Name = "${var.vpc_name_label}_private_rt"
-    }
+  tags = {
+    Name = "${var.vpc_name_label}_private_rt"
+  }
 }
 
 resource "aws_route_table_association" "public_rt_assoc" {

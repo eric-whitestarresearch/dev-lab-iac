@@ -1,7 +1,7 @@
 variable "vpc_cidr" {
-    type = string
-    description = "The CIDR to use for the VPC"
-    nullable = false
+  type = string
+  description = "The CIDR to use for the VPC"
+  nullable = false
 }
 
 variable "vpc_name_label" {
