@@ -31,8 +31,7 @@ module "vpc" {
   vpc_name_label = local.json_data.vpc_name
   public_subnets = local.json_data.public_subnets
   private_subnets = local.json_data.private_subnets
-  nat_gw_int_subnet = local.json_data.nat_gw_int_subnet
-  nat_gw_ext_subnet = local.json_data.nat_gw_ext_subnet
+  nat_gw_ext_subnet = local.json_data.nat_gw_subnet
   ssh_keypair = local.json_data.ec2_ssh_key_name
   instance_profile = module.iam.ssm_profile_name
 }
@@ -46,4 +45,11 @@ module "vpc_endpoints" {
   subnet_a_name = local.json_data.vpc_endpoints.az_a_subnet_name
   subnet_b_name = local.json_data.vpc_endpoints.az_b_subnet_name
   subnet_c_name = local.json_data.vpc_endpoints.az_c_subnet_name
+}
+
+module "internal_private_zone" {
+  source = "${path.module}/../../modules/dns_zone"
+  private_zone = true
+  target_vpc_id = module.vpc.vpc_info.vpc.id
+  zone_name = local.json_data.priave_dns_zone
 }

@@ -20,11 +20,6 @@ variable "private_subnets" {
   description = "A list of the private subnets to create in the vpc"
 }
 
-variable "nat_gw_int_subnet" {
-  type = string
-  description = "The subnet to place the NAT gateway internal interface in"
-}
-
 variable "nat_gw_ext_subnet" {
   type = string
   description = "The subnet to place the NAT gateway external interface in"

@@ -57,6 +57,7 @@ resource "aws_network_interface" "nat_gateway_nic" {
 
   tags = {
     Name = "${var.vpc_name_label}_nat_gw_nic_ext"
+    resume = "true"
   }
 }
 

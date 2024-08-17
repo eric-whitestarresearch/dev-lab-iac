@@ -4,8 +4,7 @@
   "vpc_name" : "vpc_name",
   "allowed_account_ids" : ["Allowed Accoud IDs"],
   "ec2_ssh_key_name" : "ssh_keypair_name",
-  "nat_gw_ext_subnet" : "name of nat external subnet",
-  "nat_gw_int_subnet" : "name of nat internal subnet",
+  "nat_gw_subnet" : "name of nat gateway public subnet",
   "public_subnets" : {
     "pub_a" : {
       "cidr" : "10.0.0.0/23",
@@ -46,5 +45,6 @@
       "az_a_subnet_name" : "private_a",
       "az_b_subnet_name" : "private_b",
       "az_c_subnet_name" : "private_c"
-  }
+  },
+  "priave_dns_zone" : "env-internal.example.com" 
 }

@@ -9,3 +9,7 @@ output "vpc_endpoints" {
   }
   description = "Information about the created VPC endpoints"
 }
+
+output "internal_dns_zone" {
+  value = module.internal_private_zone.zone_info
+}
