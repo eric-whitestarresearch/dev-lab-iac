@@ -53,3 +53,58 @@ module "internal_private_zone" {
   target_vpc_id = module.vpc.vpc_info.vpc.id
   zone_name = local.json_data.priave_dns_zone
 }
+
+resource "aws_security_group" "dev_sg" {
+  name =  "lf_dev_instance_sg"
+  description = "SG for development ec2 instances"
+  vpc_id = module.vpc.vpc_info.vpc.id
+
+  tags = {
+    Name = "lf_dev_instance_sg"
+  } 
+
+  #Allow all out bound traffic
+  egress {
+    from_port = 0
+    to_port = 0
+    protocol = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  ingress {
+    from_port = 0
+    to_port = 0
+    protocol = -1
+    cidr_blocks = [module.vpc.vpc_info.vpc.cidr_block]
+  }
+}
+
+module "dev_workstation" {
+  source = "${path.module}/../../modules/ec2_instance"
+  instance_type = "t3.micro"
+  vpc_id = module.vpc.vpc_info.vpc.id
+  subnet_id = module.vpc.vpc_info.private_subnets[local.json_data.dev_workstation.subnet_name].id
+  security_group_id = aws_security_group.dev_sg.id
+  user_data = null
+  instance_name = "lf_dev_workstation"
+  ssh_keypair = local.json_data.ec2_ssh_key_name
+  instance_profile = module.iam.ssm_profile_name
+  route53_zone_id = module.internal_private_zone.zone_info.id
+}
+
+module "kubernetes_nodes" {
+  source = "${path.module}/../../modules/ec2_instance"
+  for_each = local.json_data.kubernetes_nodes
+  instance_type = local.json_data.kubernetes_instance_type
+  
+  vpc_id = module.vpc.vpc_info.vpc.id
+  subnet_id = module.vpc.vpc_info.private_subnets[each.value.subnet_name].id
+  security_group_id = aws_security_group.dev_sg.id
+  user_data = file("${path.module}/scripts/lf_dev_k8s_up.sh")
+  instance_name = each.value.name
+  ssh_keypair = local.json_data.ec2_ssh_key_name
+  instance_profile = module.iam.lf_k8s_profile_name
+  route53_zone_id = module.internal_private_zone.zone_info.id
+  additional_tags = each.value.tags
+
+}

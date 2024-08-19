@@ -13,3 +13,11 @@ output "vpc_endpoints" {
 output "internal_dns_zone" {
   value = module.internal_private_zone.zone_info
 }
+
+output "instance_info" {
+  value = {
+    dev_workstation = module.dev_workstation.instance_info,
+    kubernetes_nodes = {for node in module.kubernetes_nodes: node.instance_info.name => node.instance_info}
+
+  }
+}

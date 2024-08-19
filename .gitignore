@@ -4,3 +4,4 @@
 *.tfstate*
 *.conf
 !sample-backend.conf
+.venv
