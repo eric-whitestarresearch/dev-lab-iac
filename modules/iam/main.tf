@@ -41,6 +41,25 @@ resource "aws_iam_instance_profile" "ssm_profile" {
   role = aws_iam_role.ssm_mgmt_ec2_role.name
 }
 
+resource "aws_iam_policy" "lf_k8s_add_node" {
+  name = "lf_k8s_add_node"
+  path = "/"
+  description = "Allows microk8s nodes to run lamba to add node to cluster"
+
+  policy = jsonencode(
+    {
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Sid": "VisualEditor0",
+            "Effect": "Allow",
+            "Action": "lambda:InvokeFunction",
+            "Resource": "arn:aws:lambda:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:function:microk8s_new_node"
+        }
+    ]
+  }
+  )
+}
 
 resource "aws_iam_role" "lf_k8s_role" {
   name = "lf_k8s_role"
@@ -59,7 +78,7 @@ resource "aws_iam_role" "lf_k8s_role" {
     ]
   })
 
-  managed_policy_arns = [data.aws_iam_policy.ssm_policy.arn]
+  managed_policy_arns = [data.aws_iam_policy.ssm_policy.arn, aws_iam_policy.lf_k8s_add_node.arn]
 
 
   tags = {

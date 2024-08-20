@@ -36,6 +36,7 @@
     }
   },
   "vpc_endpoints" : {
+      "endpoints_enabled" : false,
       "service_names" : [
         "ssm",
         "ssmmessages",
@@ -46,5 +47,51 @@
       "az_b_subnet_name" : "private_b",
       "az_c_subnet_name" : "private_c"
   },
-  "priave_dns_zone" : "env-internal.example.com" 
+  "priave_dns_zone" : "env-internal.example.com",
+  "dev_workstation" : {
+    "subnet_name" : "lf_dev_private_a"
+  },
+  "kubernetes_instance_type" : "t3.small",
+  "kubernetes_nodes" : {
+    "k8s_n1" : {
+      "name" : "k8s_n1",
+      "subnet_name" : "private_a",
+      "tags" : { "k8s_role": "first" , "microk8s_cluster": "cluster_1"}
+    },
+    "k8s_n2" : {
+      "name" : "k8s_n2",
+      "subnet_name" : "private_a",
+      "tags" : {"k8s_role" : "control_plane"  , "microk8s_cluster": "cluster_1"}
+    },
+    "k8s_n3" : {
+      "name" : "k8s_n3",
+      "subnet_name" : "private_a",
+      "tags" : {"k8s_role" : "control_plane"  , "microk8s_cluster": "cluster_1"}
+    },
+    "k8s_n4" : {
+      "name" : "k8s_n4",
+      "subnet_name" : "private_a",
+      "tags" : {"k8s_role" : "worker"  , "microk8s_cluster": "cluster_1"}
+    },
+    "k8s_2_n1" : {
+      "name" : "k8s_2_n1",
+      "subnet_name" : "private_a",
+      "tags" : { "k8s_role": "first" , "microk8s_cluster": "cluster_2"}
+    },
+    "k8s_2_n2" : {
+      "name" : "k8s_2_n2",
+      "subnet_name" : "private_a",
+      "tags" : {"k8s_role" : "control_plane"  , "microk8s_cluster": "cluster_2"}
+    },
+    "k8s_2_n3" : {
+      "name" : "k8s_2_n3",
+      "subnet_name" : "private_a",
+      "tags" : {"k8s_role" : "control_plane"  , "microk8s_cluster": "cluster_2"}
+    },
+    "k8s_2_n4" : {
+      "name" : "k8s_2_n4",
+      "subnet_name" : "private_a",
+      "tags" : {"k8s_role" : "worker"  , "microk8s_cluster": "cluster_2"}
+    }
+  }
 }

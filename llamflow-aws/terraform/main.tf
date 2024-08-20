@@ -38,7 +38,8 @@ module "vpc" {
 
 module "vpc_endpoints" {
   source = "${path.module}/../../modules/vpc_endpoints"
-  for_each = toset(local.json_data.vpc_endpoints.service_names)
+  #Only create the endpoints if enabled in the config file
+  for_each = local.json_data.vpc_endpoints.endpoints_enabled ? toset(local.json_data.vpc_endpoints.service_names) : toset([])
   endpoint_name = "${local.json_data.vpc_name}_${each.value}_ep"
   service_name = "com.amazonaws.${data.aws_region.current.name}.${each.value}"
   vpc_id = module.vpc.vpc_info.vpc.id
