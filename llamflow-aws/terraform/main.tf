@@ -33,7 +33,7 @@ module "vpc" {
   private_subnets = local.json_data.private_subnets
   nat_gw_ext_subnet = local.json_data.nat_gw_subnet
   ssh_keypair = local.json_data.ec2_ssh_key_name
-  instance_profile = module.iam.ssm_profile_name
+  instance_profile = module.iam.iam_info.ssm_profile.name
 }
 
 module "vpc_endpoints" {
@@ -46,6 +46,11 @@ module "vpc_endpoints" {
   subnet_a_name = local.json_data.vpc_endpoints.az_a_subnet_name
   subnet_b_name = local.json_data.vpc_endpoints.az_b_subnet_name
   subnet_c_name = local.json_data.vpc_endpoints.az_c_subnet_name
+}
+
+module "lamba_functions" {
+  source = "${path.module}/../../modules/lambda"
+  microk8s_add_node_role_arn = module.iam.iam_info.lf_microk8s_new_node_role.arn
 }
 
 module "internal_private_zone" {
@@ -89,7 +94,7 @@ module "dev_workstation" {
   user_data = null
   instance_name = "lf_dev_workstation"
   ssh_keypair = local.json_data.ec2_ssh_key_name
-  instance_profile = module.iam.ssm_profile_name
+  instance_profile = module.iam.iam_info.ssm_profile.name
   route53_zone_id = module.internal_private_zone.zone_info.id
 }
 
@@ -104,7 +109,7 @@ module "kubernetes_nodes" {
   user_data = file("${path.module}/scripts/lf_dev_k8s_up.sh")
   instance_name = each.value.name
   ssh_keypair = local.json_data.ec2_ssh_key_name
-  instance_profile = module.iam.lf_k8s_profile_name
+  instance_profile = module.iam.iam_info.lf_k8s_profile.name
   route53_zone_id = module.internal_private_zone.zone_info.id
   additional_tags = each.value.tags
 

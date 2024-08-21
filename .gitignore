@@ -5,3 +5,4 @@
 *.conf
 !sample-backend.conf
 .venv
+*.zip

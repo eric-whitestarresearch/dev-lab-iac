@@ -18,4 +18,4 @@ do
 done
   
 instanceId=`ec2metadata --instance-id`
-aws lambda invoke --function-name microk8s_new_node --invocation-type Event --payload "{\"new_node\" : \"$instanceId\"}" --cli-binary-format raw-in-base64-out  /dev/stdout
+aws lambda invoke --function-name lf_microk8s_new_node --invocation-type Event --payload "{\"new_node\" : \"$instanceId\"}" --cli-binary-format raw-in-base64-out  /dev/stdout
