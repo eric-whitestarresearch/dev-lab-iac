@@ -23,6 +23,11 @@ resource "aws_instance" "instance" {
   key_name = var.ssh_keypair
   iam_instance_profile = var.instance_profile
   user_data = var.user_data
+
+  root_block_device {
+    volume_size = var.root_device_size
+    volume_type = var.root_device_type
+  }
  
   network_interface {
     network_interface_id = aws_network_interface.instance_nic.id

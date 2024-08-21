@@ -7,9 +7,7 @@ terraform {
   }
 }
 
-data "aws_iam_policy" "ssm_policy" {
-  name = "AmazonSSMFullAccess"
-}
+
 
 resource "aws_iam_role" "ssm_mgmt_ec2_role" {
   name = "ssm_mgmt_ec2_role"
@@ -78,7 +76,7 @@ resource "aws_iam_role" "lf_k8s_role" {
     ]
   })
 
-  managed_policy_arns = [data.aws_iam_policy.ssm_policy.arn, aws_iam_policy.lf_k8s_add_node.arn]
+  managed_policy_arns = [data.aws_iam_policy.ssm_policy.arn, data.aws_iam_policy.ebscsi_policy.arn,aws_iam_policy.lf_k8s_add_node.arn]
 
 
   tags = {

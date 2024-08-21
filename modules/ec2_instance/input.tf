@@ -50,3 +50,15 @@ variable "additional_tags" {
   default = {}
   description = "Any additoinal tags to add"
 }
+
+variable "root_device_size" {
+  type = string
+  default = "8"
+  description = "The size of the EBS volume for the root device"
+}
+
+variable "root_device_type" {
+  type = string
+  default = "gp2"
+  description = "The volume type of the root device"
+}

@@ -96,6 +96,8 @@ module "dev_workstation" {
   ssh_keypair = local.json_data.ec2_ssh_key_name
   instance_profile = module.iam.iam_info.ssm_profile.name
   route53_zone_id = module.internal_private_zone.zone_info.id
+  root_device_size = local.json_data.dev_workstation.disk_size
+  root_device_type = local.json_data.dev_workstation.disk_type
 }
 
 module "kubernetes_nodes" {
@@ -112,5 +114,7 @@ module "kubernetes_nodes" {
   instance_profile = module.iam.iam_info.lf_k8s_profile.name
   route53_zone_id = module.internal_private_zone.zone_info.id
   additional_tags = each.value.tags
+  root_device_size = local.json_data.kubernetes_disk_size
+  root_device_type = local.json_data.kubernetes_disk_type
 
 }
