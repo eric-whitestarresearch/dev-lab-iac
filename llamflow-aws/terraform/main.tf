@@ -102,7 +102,7 @@ module "dev_workstation" {
 
 module "kubernetes_nodes" {
   source = "${path.module}/../../modules/ec2_instance"
-  for_each = local.json_data.kubernetes_nodes
+  for_each = local.json_data.kubernetes_enabled ? local.json_data.kubernetes_nodes : {}
   instance_type = local.json_data.kubernetes_instance_type
   
   vpc_id = module.vpc.vpc_info.vpc.id

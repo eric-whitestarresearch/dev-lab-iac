@@ -12,6 +12,15 @@ class ClusterTagNotFound(BaseException):
   pass
 
 def get_cluster_name_for_node(instance_id):
+  """
+    Readds the 'microk8s_cluster' tag on an instance and returns it
+
+    Parameter:
+      instance_id (Str): The instance id of the instance to read the tag from
+
+    Returns:
+      Str: The name of the cluster the instance is assigned to.
+  """
   ec2_client = boto3.client('ec2')
   ec2_client_response = ec2_client.describe_instances(
     InstanceIds = [instance_id]
@@ -63,7 +72,16 @@ def find_node(cluster_name, role, instance_id):
     return None
 
 def run_ssm_command(instance_id, command):
-  #Run the node add command to get the token against the first node in the cluster
+  """
+  Execute a command on an instance using SSM
+
+  Parameters:
+    instance_id (Str): The instance_id to execute the command on
+    command (Str): The commmand to execute
+
+  Return:
+    Dict: The dictonary from SSM Client command invocation with the information about the command and it's result
+  """
   ssm_client = boto3.client('ssm')
   ssm_response = ssm_client.send_command(
     InstanceIds = [instance_id],
@@ -90,6 +108,16 @@ def run_ssm_command(instance_id, command):
 
 
 def lambda_handler(event, context):
+  """
+  The entry point for the lambda function
+
+  Parameters:
+    event (Dict): The details of the event that triggered the lambda
+    context (Dict): The context of the lambda execution
+
+  Return:
+    Dict: A dictonary wih the http status code and a body to describe this execution
+  """
   cluster_name = get_cluster_name_for_node(event['new_node'])
 
   #Find the instance that we want to run the add node against
@@ -114,7 +142,7 @@ def lambda_handler(event, context):
 
   #Is the new node a worker?
   if find_node(cluster_name, 'worker', event['new_node']):
-    add_new_node_command = add_new_node_command.strip() + " --worker" 
+      add_new_node_command = add_new_node_command.strip() + " --worker" 
   #Add the new node to the cluster
   add_new_result = run_ssm_command(event['new_node'], add_new_node_command)
   print(add_new_node_command)
