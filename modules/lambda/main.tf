@@ -18,3 +18,15 @@ resource "aws_lambda_function" "microk8s_add_node" {
   architectures = ["arm64"]
   timeout = 120
 }
+
+resource "aws_lambda_function" "lf_goodnight" {
+  filename = data.archive_file.goodnight_python.output_path
+  function_name = "lf_goodnight"
+  role = var.lf_goodnight_role_arn
+
+  source_code_hash = data.archive_file.goodnight_python.output_base64sha256
+  runtime = "python3.12"
+  handler = "goodnight.lambda_handler"
+  architectures = ["arm64"]
+  timeout = 45
+}

@@ -34,6 +34,7 @@ module "vpc" {
   nat_gw_ext_subnet = local.json_data.nat_gw_subnet
   ssh_keypair = local.json_data.ec2_ssh_key_name
   instance_profile = module.iam.iam_info.ssm_profile.name
+  hibernation_enabled = local.json_data.instance_hibernation_enabled
 }
 
 module "vpc_endpoints" {
@@ -51,6 +52,7 @@ module "vpc_endpoints" {
 module "lamba_functions" {
   source = "${path.module}/../../modules/lambda"
   microk8s_add_node_role_arn = module.iam.iam_info.lf_microk8s_new_node_role.arn
+  lf_goodnight_role_arn = module.iam.iam_info.lf_goodnight_lambda_role.arn
 }
 
 module "internal_private_zone" {
@@ -98,6 +100,7 @@ module "dev_workstation" {
   route53_zone_id = module.internal_private_zone.zone_info.id
   root_device_size = local.json_data.dev_workstation.disk_size
   root_device_type = local.json_data.dev_workstation.disk_type
+  hibernation_enabled = local.json_data.instance_hibernation_enabled
 }
 
 module "kubernetes_nodes" {
@@ -116,5 +119,12 @@ module "kubernetes_nodes" {
   additional_tags = each.value.tags
   root_device_size = local.json_data.kubernetes_disk_size
   root_device_type = local.json_data.kubernetes_disk_type
+  hibernation_enabled = local.json_data.instance_hibernation_enabled
+}
+
+module "event_bridge" {
+  source = "${path.module}/../../modules/event_bridge"
+  lf_goodnight_lambda_arn = module.lamba_functions.lambda_info.lf_goodnight.arn
+  lf_goodnight_lamba_role_arn = module.iam.iam_info.lf_goodnight_eventbridge_role.arn
 
 }

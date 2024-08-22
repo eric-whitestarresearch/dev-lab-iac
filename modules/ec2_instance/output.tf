@@ -5,6 +5,6 @@ output "instance_info" {
       "name" : aws_instance.instance.tags.Name
       "nic_id" : aws_network_interface.instance_nic.id,
       "nic_arn" : aws_network_interface.instance_nic.arn
-      "fqdn" : aws_route53_record.record.fqdn
+      "fqdn" : var.create_dns_record ? aws_route53_record.record["create_record"].fqdn : "none"
   }
 }

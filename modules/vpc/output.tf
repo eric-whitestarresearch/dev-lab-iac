@@ -28,14 +28,7 @@ output "vpc_info" {
         cidr_block = subnet.cidr_block
       }
     },
-    nat_gateway = {
-      type = "EC2_instance"
-      id = aws_instance.nat_gateway.id
-      arn = aws_instance.nat_gateway.arn
-      name = aws_instance.nat_gateway.tags.Name
-      nic_id = aws_network_interface.nat_gateway_nic.id
-      nic_arn = aws_network_interface.nat_gateway_nic.arn
-    },
+    nat_gateway = module.nat_instance.instance_info,
     public_route_table = {
       id = aws_route_table.public_route_table.id
       arn = aws_route_table.public_route_table.arn

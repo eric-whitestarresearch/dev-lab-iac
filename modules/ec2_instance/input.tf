@@ -45,6 +45,13 @@ variable "route53_zone_id" {
   description = "The id of the route53 zone to create the DNS records in for the instance"
 }
 
+variable "create_dns_record" {
+ type = bool
+ default = true
+ description = "Should a DNS record be created for the instance. Requries route53_zone_id"
+
+}
+
 variable "additional_tags" {
   type = map 
   default = {}
@@ -61,4 +68,22 @@ variable "root_device_type" {
   type = string
   default = "gp2"
   description = "The volume type of the root device"
+}
+
+variable "hibernation_enabled" {
+  type = bool
+  default = false
+  description = "Should hibernation be enabled for the instances"
+}
+
+variable "source_dest_check" {
+  type = bool
+  default = true
+  description = "Enable/Disable the check that the packet destination IP is the same as the IP as the nic. Needed for for NAT instances"
+}
+
+variable "amazon_linux_os" {
+  type = bool
+  default = false
+  description = "If true use Amazon linux AMI, If false use Ubuntu"
 }

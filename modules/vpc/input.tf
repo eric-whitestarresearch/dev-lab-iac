@@ -34,3 +34,9 @@ variable "instance_profile" {
   type = string
   description = "THe name of the instance profile to attach the NAT VM to."
 }
+
+variable "hibernation_enabled" {
+  type = bool
+  default = false
+  description = "Should hibernation be enabled for the NAT instance"
+}

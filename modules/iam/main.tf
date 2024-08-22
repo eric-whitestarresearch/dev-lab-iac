@@ -92,7 +92,7 @@ resource "aws_iam_instance_profile" "lf_k8s_profile" {
 resource "aws_iam_policy" "lf_microk8s_new_node_lambda" {
   name = "lf_microk8s_new_node_lambda"
   path = "/"
-  description = "Allows mthe lamda that creates adds new k8s nodes to run"
+  description = "Allows the lambda that creates adds new k8s nodes to run"
 
   policy = jsonencode(
     {
@@ -146,5 +146,121 @@ resource "aws_iam_role" "lf_microk8s_new_node_lambda_role" {
 
   tags = {
     Name = "lf_microk8s_new_node_lambda_role"
+  }
+}
+
+resource "aws_iam_policy" "lf_goodnight_lamba_policy" {
+  name = "lf_goodnight_lamba_policy"
+  path = "/"
+  description = "Allows the lambda that suspends the lab to run"
+
+  policy = jsonencode(
+  {
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Sid": "VisualEditor0",
+            "Effect": "Allow",
+            "Action": [
+                "ec2:DescribeInstances",
+                "ec2:StartInstances",
+                "ec2:StopInstances"
+            ],
+            "Resource": "*"
+        },
+        {
+            "Effect": "Allow",
+            "Action": "logs:CreateLogGroup",
+            "Resource": "arn:aws:logs:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:*"
+        },
+        {
+            "Effect": "Allow",
+            "Action": [
+                "logs:CreateLogStream",
+                "logs:PutLogEvents"
+            ],
+            "Resource": [
+                "arn:aws:logs:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:log-group:/aws/lambda/lf-goodnight:*"
+            ]
+        }
+    ]
+  }
+  )
+}
+
+resource "aws_iam_role" "lf_goodnight_lambda_role" {
+  name = "lf_goodnight_lambda_role"
+
+  assume_role_policy = jsonencode({
+    "Version": "2012-10-17",
+    "Statement": [
+      {
+        "Effect": "Allow",
+        "Principal": {
+        "Service": "lambda.amazonaws.com"
+        },
+        "Action": "sts:AssumeRole"
+      }
+    ]
+  })
+
+  managed_policy_arns = [aws_iam_policy.lf_goodnight_lamba_policy.arn]
+
+
+  tags = {
+    Name = "lf_goodnight_role"
+  }
+}
+
+resource "aws_iam_policy" "lf_goodnight_eventbridge_policy" {
+  name = "lf_goodnight_eventbridge_policy"
+  path = "/"
+  description = "Allows the lambda that suspends the lab to run"
+
+  policy = jsonencode(
+  {
+    "Version": "2012-10-17",
+    "Statement": [
+      {
+        "Effect": "Allow",
+        "Action": [
+          "lambda:InvokeFunction"
+        ],
+        "Resource": [
+          "arn:aws:lambda:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:function:lf_goodnight:*",
+          "arn:aws:lambda:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:function:lf_goodnight"
+        ]
+      }
+    ]
+  }
+  )
+}
+
+resource "aws_iam_role" "lf_goodnight_eventbridge_role" {
+  name = "lf_goodnight_eventbridge_role"
+
+  assume_role_policy = jsonencode({
+    "Version": "2012-10-17",
+    "Statement": [
+      {
+        "Effect": "Allow",
+        "Principal": {
+          "Service": "scheduler.amazonaws.com"
+        },
+        "Action": "sts:AssumeRole",
+        "Condition": {
+          "StringEquals": {
+            "aws:SourceAccount": "${data.aws_caller_identity.current.account_id}"
+          }
+        }
+        }
+    ]
+  })
+
+  managed_policy_arns = [aws_iam_policy.lf_goodnight_eventbridge_policy.arn]
+
+
+  tags = {
+    Name = "lf_goodnight_eventbridge_role"
   }
 }
