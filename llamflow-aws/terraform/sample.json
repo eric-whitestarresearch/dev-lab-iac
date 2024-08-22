@@ -48,6 +48,7 @@
       "az_c_subnet_name" : "private_c"
   },
   "priave_dns_zone" : "env-internal.example.com",
+  "instance_hibernation_enabled" : true,
   "dev_workstation" : {
     "subnet_name" : "lf_dev_private_a",
     "disk_size" : "10",
