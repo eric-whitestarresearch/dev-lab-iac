@@ -89,7 +89,7 @@ resource "aws_security_group" "dev_sg" {
 
 module "dev_workstation" {
   source = "${path.module}/../../modules/ec2_instance"
-  instance_type = "t3.micro"
+  instance_type = local.json_data.dev_workstation.instance_type
   vpc_id = module.vpc.vpc_info.vpc.id
   subnet_id = module.vpc.vpc_info.private_subnets[local.json_data.dev_workstation.subnet_name].id
   security_group_id = aws_security_group.dev_sg.id
