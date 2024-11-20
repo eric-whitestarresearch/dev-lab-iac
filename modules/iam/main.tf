@@ -164,7 +164,9 @@ resource "aws_iam_policy" "lf_goodnight_lamba_policy" {
             "Action": [
                 "ec2:DescribeInstances",
                 "ec2:StartInstances",
-                "ec2:StopInstances"
+                "ec2:StopInstances",
+                "rds:DescribeDBInstances",
+                "rds:StopDBInstance"
             ],
             "Resource": "*"
         },
