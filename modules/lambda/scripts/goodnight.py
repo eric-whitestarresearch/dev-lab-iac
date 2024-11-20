@@ -39,6 +39,32 @@ def find_running_instances():
     "instances_to_hibernate": []
     }
   
+def find_running_rds_instances():
+  """
+  Find running RDS instances
+
+  Parameters: 
+    None
+
+  Return
+    List of instance IDs
+  """
+  rds_client = boto3.client('rds')
+  response = rds_client.describe_db_instances()
+
+  return [r['DBInstanceIdentifier'] for r in response['DBInstances'] if r['DBInstanceStatus'] == 'available']
+
+def stop_rds_instances(instances):
+  """
+  Stop the RDS instnaces
+
+  Parameters:
+    instances (List(string)): A list of the RDS instances to start or stop
+  """
+  rds_client = boto3.client('rds')
+  for i in instances:
+    rds_client.stop_db_instance(DBInstanceIdentifier=i)
+
 def stop_instances(instances, hibernate=False):
   """
   Stop or hibernate and instance
@@ -68,14 +94,16 @@ def lambda_handler(event, context):
     Dict: A dictonary wih the http status code and a body to describe this execution
   """
   target_instances = find_running_instances()
-
+  rds_target_instances = find_running_rds_instances()
 
   if len(target_instances["instances_to_stop" ]) > 0 :
     stop_instances(instances = target_instances["instances_to_stop" ], hibernate = False)
   if len(target_instances["instances_to_hibernate" ]) > 0 :
     stop_instances(instances = target_instances["instances_to_hibernate" ], hibernate = True)
+  if len(rds_target_instances) > 0:
+    stop_rds_instances(rds_target_instances)
 
   return {
       'statusCode': 200,
-      'body': target_instances
+      'body': {"ec2": target_instances, "rds": rds_target_instances}
     }

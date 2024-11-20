@@ -14,7 +14,7 @@ resource "aws_scheduler_schedule" "lf_goodnight" {
     maximum_window_in_minutes = 5
   }
 
-  schedule_expression = "cron(0 19 * * ? *)"
+  schedule_expression = "cron(0 20 * * ? *)"
   schedule_expression_timezone = "America/Chicago"
   
   target {
