@@ -77,7 +77,7 @@ resource "aws_security_group" "nat_gw_allow" {
 
 module "nat_instance" {
   source = "${path.module}/../ec2_instance"
-  instance_type = "t3.micro"
+  instance_type = "t4g.micro"
   vpc_id = aws_vpc.vpc.id
   subnet_id = aws_subnet.public_subnets[var.nat_gw_ext_subnet].id
   security_group_id = aws_security_group.nat_gw_allow.id
